@@ -1,6 +1,5 @@
 let ketcherInstance = null;
 
-// 1. Wait for Ketcher to initialize inside the iframe
 function waitForKetcher() {
     const iframe = document.getElementById('ketcher-frame');
     if (iframe.contentWindow && iframe.contentWindow.ketcher) {
@@ -12,7 +11,6 @@ function waitForKetcher() {
 }
 document.getElementById('ketcher-frame').addEventListener('load', waitForKetcher);
 
-// 2. Fetch loaded rules to populate the datalist
 async function loadReagents() {
     try {
         const response = await fetch('/reagents');
@@ -32,7 +30,6 @@ async function loadReagents() {
 }
 loadReagents();
 
-// 3. Process the reaction (Now with Chain Support!)
 async function runReaction() {
     if (!ketcherInstance && document.getElementById('ketcher-frame').contentWindow.ketcher) {
         ketcherInstance = document.getElementById('ketcher-frame').contentWindow.ketcher;
@@ -56,7 +53,6 @@ async function runReaction() {
             return;
         }
 
-        // Split by "->" to allow for multi-step synthesis chaining
         const sequence = rawInput.split('->').map(r => r.trim()).filter(r => r);
 
         for (let i = 0; i < sequence.length; i++) {
@@ -72,11 +68,10 @@ async function runReaction() {
 
             if (data.product_smiles) {
                 currentSmiles = data.product_smiles;
-                // Visually update the canvas at each step in the chain
                 await ketcherInstance.setMolecule(currentSmiles);
             } else {
                 alert(`Chain broke at Step ${i + 1} (${currentReagent}): ${data.message}`);
-                return; // Stop the chain if a reaction fails
+                return;
             }
         }
 

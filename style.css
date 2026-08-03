@@ -27,7 +27,6 @@ body {
     gap: 10px; 
 }
 
-/* Updated to target the text input so it looks identical to the old dropdown */
 input[type="text"], button { 
     background: #111; 
     color: #fff; 
@@ -37,7 +36,6 @@ input[type="text"], button {
     cursor: pointer; 
 }
 
-/* Ensure the input box is wide enough for chains */
 input[type="text"] {
     width: 250px;
 }
