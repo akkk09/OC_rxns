@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RXN- Documentation</title>
+    <style>
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            color: #222; 
+            line-height: 1.4; 
+            padding: 40px; 
+            max-width: 900px; 
+            margin: auto; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            text-align: center; 
+            border-bottom: 3px solid #2c3e50; 
+            padding-bottom: 10px; 
+            margin-bottom: 10px;
+        }
+        h2 { 
+            color: #e74c3c; 
+            margin-top: 30px; 
+            border-bottom: 1px solid #bdc3c7; 
+            padding-bottom: 5px; 
+            font-size: 1.3em;
+        }
+        p.intro { 
+            text-align: center; 
+            font-size: 1.1em; 
+            color: #555; 
+            margin-bottom: 30px; 
+        }
+        .feature-box { 
+            background: #f8f9fa; 
+            border-left: 4px solid #3498db; 
+            padding: 15px 20px; 
+            margin-bottom: 30px; 
+        }
+        .feature-box h3 { margin-top: 0; color: #2980b9; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 0 30px; 
+        }
+        ul { padding-left: 20px; margin-top: 5px; }
+        li { margin-bottom: 8px; font-size: 0.9em; }
+        strong { color: #2c3e50; font-weight: bold; }
+        
+        /* Ensures the PDF prints cleanly across pages */
+        @media print {
+            body { padding: 0; max-width: 100%; }
+            .page-break { page-break-before: always; }
+            .no-break { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Organic Chemistry Simulator</h1>
+    <p class="intro">Documentation and Reagent List</p>
+
+    <div class="feature-box">
+        <h3>How to Use the Simulator</h3>
+        <ul>
+            <li><strong>Draw:</strong> Use the Ketcher canvas to draw your reactant molecule.</li>
+            <li><strong>Search:</strong> Click the input box at the top and type to instantly filter available reagents.</li>
+            <li><strong>Reaction Chaining:</strong> You can simulate multi-step synthesis! Type reagents separated by an arrow (<code>-></code>).<br>
+            <em>Example:</em> <code>O3 then Zn/H2O -> NaBH4 -> Conc. H2SO4 / Heat</code></li>
+        </ul>
+    </div>
+
+    <div class="grid">
+        <!-- Left Column -->
+        <div>
+            <div class="no-break">
+                <h2>Alcohols & Phenols</h2>
+                <ul>
+                    <li><strong>HCl / anhy. ZnCl2 (Lucas Reagent):</strong> Alcohols to alkyl chlorides.</li>
+                    <li><strong>Conc. H2SO4 / Heat:</strong> Dehydration to alkenes.</li>
+                    <li><strong>Na then CH3I:</strong> Williamson ether synthesis.</li>
+                    <li><strong>CHCl3 / aq. NaOH:</strong> Reimer-Tiemann (formylates phenol).</li>
+                    <li><strong>CO2 / NaOH, then H+:</strong> Kolbe's reaction (carboxylates phenol).</li>
+                    <li><strong>Zn dust / Heat:</strong> Reduces phenol to benzene.</li>
+                    <li><strong>H+ / Heat (Pinacol Rearrangement):</strong> 1,2-diols to ketones via alkyl shift.</li>
+                    <li><strong>NaIO4 or HIO4:</strong> Cleaves 1,2-diols into two carbonyls.</li>
+                    <li><strong>PPh3, DEAD, DPPA:</strong> Mitsunobu reaction (alcohol to azide).</li>
+                </ul>
+            </div>
+
+            <div class="no-break">
+                <h2>Aldehydes & Ketones</h2>
+                <ul>
+                    <li><strong>Zn-Hg / conc. HCl:</strong> Clemmensen reduction (to alkanes).</li>
+                    <li><strong>NH2NH2 / KOH, heat:</strong> Wolff-Kishner reduction (to alkanes).</li>
+                    <li><strong>Tollens' Reagent:</strong> Oxidizes aldehydes to carboxylates.</li>
+                    <li><strong>HCN:</strong> Forms cyanohydrins.</li>
+                    <li><strong>I2 / NaOH (Iodoform Test):</strong> Cleaves methyl ketones.</li>
+                    <li><strong>Ph3P=CH2 (Wittig Reagent):</strong> Methylenation to terminal alkenes.</li>
+                    <li><strong>mCPBA or CF3CO3H:</strong> Baeyer-Villiger oxidation (ketones to esters).</li>
+                    <li><strong>Dil. NaOH / Heat (Aldol):</strong> Aldol condensation.</li>
+                    <li><strong>Conc. NaOH (Cannizzaro):</strong> Disproportionation of aldehydes.</li>
+                </ul>
+            </div>
+
+            <div class="no-break">
+                <h2>Alkenes</h2>
+                <ul>
+                    <li><strong>H2 / Pd-C:</strong> Catalytic hydrogenation (syn-addition).</li>
+                    <li><strong>Br2 / CCl4:</strong> Anti-addition of bromine.</li>
+                    <li><strong>HBr:</strong> Hydrohalogenation.</li>
+                    <li><strong>H2O / H+:</strong> Acid-catalyzed hydration.</li>
+                    <li><strong>O3 then Zn/H2O:</strong> Reductive ozonolysis.</li>
+                    <li><strong>O3 then H2O2:</strong> Oxidative ozonolysis.</li>
+                    <li><strong>BH3.THF then H2O2, OH-:</strong> Hydroboration-oxidation.</li>
+                    <li><strong>mCPBA (Epoxidation):</strong> Forms epoxides.</li>
+                    <li><strong>OsO4 then NaHSO3:</strong> Syn-dihydroxylation.</li>
+                    <li><strong>CH2I2 / Zn(Cu):</strong> Simmons-Smith cyclopropanation.</li>
+                </ul>
+            </div>
+
+            <div class="no-break">
+                <h2>Alkynes</h2>
+                <ul>
+                    <li><strong>H2 / Lindlar's Catalyst:</strong> Reduction to cis-alkene.</li>
+                    <li><strong>Na / liq. NH3:</strong> Birch reduction to trans-alkene.</li>
+                    <li><strong>H2 / Ni (excess):</strong> Hydrogenation to alkane.</li>
+                    <li><strong>HgSO4 / dil. H2SO4:</strong> Kucherov reaction (hydration to ketone).</li>
+                    <li><strong>Ammoniacal AgNO3:</strong> Tests for terminal alkynes.</li>
+                    <li><strong>Br2 / CCl4 (excess):</strong> Halogenation to tetrahalide.</li>
+                    <li><strong>Sia2BH then H2O2, OH-:</strong> Hydroboration to aldehyde.</li>
+                    <li><strong>NaNH2 then CH3I:</strong> Homologation with methyl group.</li>
+                </ul>
+            </div>
+            
+            <div class="no-break">
+                <h2>Advanced Rearrangements</h2>
+                <ul>
+                    <li><strong>NaOH / H2O (Favorskii):</strong> Alpha-halo ketones to carboxylic acids.</li>
+                    <li><strong>KOH / Heat, then H3O+ (Benzilic Acid):</strong> 1,2-diketones to alpha-hydroxy acids.</li>
+                    <li><strong>Heat / 200°C (Claisen):</strong> Allyl vinyl ethers to gamma,delta-unsaturated ketones.</li>
+                    <li><strong>H2SO4 / Heat (Beckmann Fragmentation):</strong> Oximes to nitriles and alcohols.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div>
+            <div class="no-break">
+                <h2>Alkyl Halides</h2>
+                <ul>
+                    <li><strong>Aq. KOH / NaOH:</strong> Substitution to alcohols.</li>
+                    <li><strong>KCN / AgCN (Alcoholic):</strong> Forms nitriles / isocyanides.</li>
+                    <li><strong>KNO2 / AgNO2:</strong> Forms alkyl nitrites / nitroalkanes.</li>
+                    <li><strong>NaI / Acetone:</strong> Finkelstein reaction (to Iodides).</li>
+                    <li><strong>AgF / Hg2F2 / CoF2:</strong> Swarts reaction (to Fluorides).</li>
+                    <li><strong>Alc. KOH / Heat:</strong> E2 Dehydrohalogenation.</li>
+                    <li><strong>Mg / Dry Ether:</strong> Forms Grignard reagents.</li>
+                    <li><strong>Potassium Phthalimide then Hydrazine:</strong> Gabriel synthesis.</li>
+                    <li><strong>(CH3)2CuLi (Gilman Reagent):</strong> Corey-House synthesis.</li>
+                    <li><strong>t-BuOK:</strong> Hofmann alkene formation.</li>
+                </ul>
+            </div>
+
+            <div class="no-break">
+                <h2>Aromatics & Heterocycles</h2>
+                <ul>
+                    <li><strong>Cl2 / AlCl3 or Br2 / FeBr3:</strong> Halogenation.</li>
+                    <li><strong>Conc. HNO3 + H2SO4:</strong> Nitration.</li>
+                    <li><strong>Fuming H2SO4:</strong> Sulfonation.</li>
+                    <li><strong>CH3Cl / AlCl3:</strong> Friedel-Crafts alkylation.</li>
+                    <li><strong>CH3COCl / AlCl3:</strong> Friedel-Crafts acylation.</li>
+                    <li><strong>CO / HCl / AlCl3 / CuCl:</strong> Gattermann-Koch formylation.</li>
+                    <li><strong>POCl3 / DMF:</strong> Vilsmeier-Haack formylation.</li>
+                    <li><strong>Na / Liq. NH3 / EtOH:</strong> Birch Reduction to 1,4-cyclohexadiene.</li>
+                    <li><strong>Br2 / Acetic Acid (Heterocycle):</strong> Brominates furan/pyrrole/thiophene at position 2.</li>
+                    <li><strong>Fuming HNO3 / H2SO4 / 300°C:</strong> Nitrates pyridine at position 3.</li>
+                    <li><strong>mCPBA (Pyridine N-Oxidation):</strong> Forms Pyridine N-oxide.</li>
+                </ul>
+            </div>
+
+            <div class="no-break">
+                <h2>Carboxylic Acids</h2>
+                <ul>
+                    <li><strong>SOCl2:</strong> Forms acid chlorides.</li>
+                    <li><strong>NH3 / Heat:</strong> Forms amides.</li>
+                    <li><strong>CH3OH / H+ (Esterification):</strong> Forms methyl esters.</li>
+                    <li><strong>Red P / Br2 (HVZ):</strong> Alpha-halogenation.</li>
+                    <li><strong>NaOH + CaO / Heat:</strong> Decarboxylation.</li>
+                    <li><strong>LiAlH4 then H3O+:</strong> Reduces completely to primary alcohols.</li>
+                    <li><strong>Ag2O / Br2 / CCl4 (Hunsdiecker):</strong> Forms alkyl bromides (chain shortening).</li>
+                    <li><strong>SOCl2 then CH2N2 then Ag2O/H2O:</strong> Arndt-Eistert homologation.</li>
+                </ul>
+            </div>
+
+            <div class="no-break">
+                <h2>Nitrogen Compounds</h2>
+                <ul>
+                    <li><strong>CHCl3 / KOH (Carbylamine Test):</strong> Primary amines to isocyanides.</li>
+                    <li><strong>Br2 / KOH (Hofmann Bromamide):</strong> Degrades primary amides to primary amines.</li>
+                    <li><strong>NaNO2 / HCl, 0-5°C:</strong> Diazotization.</li>
+                    <li><strong>Cu2Cl2 / HCl (Sandmeyer):</strong> Diazonium to chlorine.</li>
+                    <li><strong>HBF4 / Heat:</strong> Balz-Schiemann reaction (Diazonium to fluorine).</li>
+                    <li><strong>H2O / Warm:</strong> Diazonium to phenol.</li>
+                    <li><strong>H3PO2 / H2O:</strong> Mild reduction (deamination).</li>
+                    <li><strong>NaN3 then Heat / H2O (Curtius):</strong> Acid chloride to primary amine.</li>
+                    <li><strong>H2SO4 / Heat (Beckmann):</strong> Oxime to amide.</li>
+                </ul>
+            </div>
+
+            <div class="page-break"></div> <!-- Forces specific sections to next page if needed -->
+
+            <div class="no-break">
+                <h2>Oxidation & Reduction</h2>
+                <ul>
+                    <li><strong>Acidic KMnO4:</strong> Vigorous oxidation.</li>
+                    <li><strong>PCC / CH2Cl2:</strong> Mild oxidation (stops at aldehydes).</li>
+                    <li><strong>SeO2 / Heat:</strong> Allylic oxidation.</li>
+                    <li><strong>MnO2 / CH2Cl2:</strong> Selectively oxidizes allylic/benzylic alcohols.</li>
+                    <li><strong>NaBH4:</strong> Mild reduction (ketones/aldehydes).</li>
+                    <li><strong>LiAlH4:</strong> Strong reduction.</li>
+                    <li><strong>DIBAL-H / -78°C:</strong> Reduces esters to aldehydes.</li>
+                    <li><strong>DIBAL-H then H3O+:</strong> Reduces nitriles to aldehydes.</li>
+                    <li><strong>NaBH4 / CeCl3:</strong> Luche reduction (1,2-reduction).</li>
+                </ul>
+            </div>
+
+            <div class="no-break">
+                <h2>Protecting Groups</h2>
+                <ul>
+                    <li><strong>Ethylene Glycol / pTsOH:</strong> Protects carbonyls (acetal).</li>
+                    <li><strong>H3O+ / Heat:</strong> Deprotects acetals.</li>
+                    <li><strong>Boc2O / Et3N:</strong> Protects amines (Boc group).</li>
+                    <li><strong>TFA / CH2Cl2:</strong> Deprotects amines.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

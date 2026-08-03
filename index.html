@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RXN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="topbar">
+        <h3>Reaction Prediction</h3>
+        <div class="controls">
+            <!-- Searchable input with a datalist -->
+            <input type="text" id="reagent" list="reagent-list" placeholder="Search or chain (R1 -> R2)">
+            <datalist id="reagent-list"></datalist>
+            <button onclick="runReaction()">Predict Product</button>
+        </div>
+    </div>
+    
+    <iframe id="ketcher-frame" src="ketcher/index.html"></iframe>
+
+    <script src="script.js"></script>
+</body>
+</html>
