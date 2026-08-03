@@ -1,6 +1,7 @@
 ```markdown
 # 🧪 High School Level Chemistry Simulator
 
+
 A private, rule-based organic chemistry simulator designed to execute advanced, high school level chemistry simulations. This engine is built on a modular architecture that strictly separates chemical logic (dictionaries) from the processing engine, allowing for complex synthetic route planning, reaction chaining, and edge-case handling.
 
 ## ✨ Key Features
