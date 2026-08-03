@@ -28,5 +28,16 @@ OXIDATION_RULES = {
     "MnO2 / CH2Cl2": [
         "[C:1]=[C:2]-[CH2:3][OH:4] >> [C:1]=[C:2]-[C:3](=[O:4])[H]",
         "[c]-[CH2:3][OH:4] >> [c]-[C:3](=[O:4])[H]"
-    ]
+    ],
+    
+    "HBr (excess, heat)": {
+        "rules": [
+            "[c:1]-[CH:2]=[CH2:3] >> [c:1]-[CH:2](Br)-[CH3:3]",
+            "[c:1]-[O:2]-[CH3:3] >> [c:1]-[OH:2]"
+        ],
+        "poisons": [
+            "[O]-[O]"
+        ],
+        "poison_message": "Presence of peroxides triggers a radical mechanism, leading to anti-Markovnikov hydrobromination."
+    }
 }
