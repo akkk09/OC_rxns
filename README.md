@@ -81,7 +81,3 @@ This application is configured for deployment on Render.
 ## 🔒 License & Copyright
 
 All Rights Reserved.
-
-```
-
-```
