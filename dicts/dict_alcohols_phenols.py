@@ -1,54 +1,80 @@
+# ==========================================
+# ALCOHOLS, PHENOLS, & ETHERS ENGINE
+# ==========================================
+
+# --- ALCOHOL POISONS ---
+PRIMARY_ALCOHOLS = ["[CX4H2,CX4H3]-[OH]"]
+PHENOLS_ONLY = ["[CX4]-[OH]"] # Prevents aliphatic alcohols from doing phenol-specific reactions
+
+# ==========================================
+# THE REAGENT DICTIONARY
+# ==========================================
 ALCOHOL_PHENOL_RULES = {
-    # 1. Lucas Test (Conc. HCl / Anhydrous ZnCl2)
-    # Converts alcohols to alkyl chlorides. (Note: 3° reacts instantly, 1° requires heat).[cite: 1]
-    "HCl / anhy. ZnCl2 (Lucas Reagent)": [
-        "[#6:1]-[OH] >> [#6:1]-[Cl]" #[cite: 1]
-    ],
 
-    # 2. Acid-Catalyzed Dehydration (Forms Alkenes)[cite: 1]
-    "Conc. H2SO4 / Heat": [
-        "[CH3,CH2,CH:1]-[C:2]-[OH] >> [C:1]=[C:2]" #[cite: 1]
-    ],
+    # --- QUALITATIVE ALCOHOL TESTS ---
+    "ZnCl2 / conc. HCl (Lucas Reagent)": {
+        "rules": [
+            # Tertiary Alcohols -> Immediate turbidity (Fast SN1)
+            "[CX4H0:1]-[OH] >> [C:1]-[Cl]",
+            
+            # Secondary Alcohols -> Turbidity after 5 minutes (Slow SN1)
+            "[CX4H1:1]-[OH] >> [C:1]-[Cl]"
+        ],
+        "poisons": PRIMARY_ALCOHOLS + ["[c]-[OH]"],
+        "poison_message": "The Lucas test relies on an SN1 mechanism. Primary alcohols and phenols cannot form stable carbocations and will not produce turbidity (alkyl chlorides) at room temperature!"
+    },
 
-    # 3. Williamson Ether Synthesis (using Methyl Iodide as the halide)[cite: 1]
-    "Na then CH3I": [
-        "[#6:1]-[OH] >> [#6:1]-[O]-[CH3]" #[cite: 1]
-    ],
+    # --- DEHYDRATION (ELIMINATION) ---
+    "Conc. H2SO4 / 170°C (Dehydration)": {
+        "rules": [
+            # E1 Beta-Elimination (Produces a mixture of alkenes based on adjacent hydrogens)
+            # RDKit will natively map all adjacent beta-hydrogens to show Saytzeff / Hofmann products.
+            "[CH3,CH2,CH1:1]-[CX4:2]-[OH] >> [C:1]=[C:2]"
+        ],
+        "poisons": ["[c]-[OH]"],
+        "poison_message": "Phenols do not undergo dehydration. The C-O bond is too strong due to resonance, and the aromatic ring prevents elimination."
+    },
 
-    # 4. Reimer-Tiemann Reaction (Phenol specifically)[cite: 1]
-    "CHCl3 / aq. NaOH": [
-        "[c:1](-[OH])[cH:2] >> [c:1](-[OH])[c:2]-[C](=O)[H]" #[cite: 1]
-    ],
+    # --- PHENOL-SPECIFIC REACTIONS (NAME REACTIONS) ---
+    "CHCl3 / aq. NaOH (Reimer-Tiemann Reaction)": {
+        "rules": [
+            # Forms Salicylaldehyde (Ortho-formylation)
+            # Targets the ortho position explicitly
+            "[c:1](-[OH])[cH1:2] >> [c:1](-[OH])[c:2]-[C](=O)[H]"
+        ],
+        "poisons": PHENOLS_ONLY,
+        "poison_message": "The Reimer-Tiemann reaction strictly requires a phenol to generate the highly reactive phenoxide ion, which then attacks the electrophilic dichlorocarbene intermediate."
+    },
+    "CO2 / NaOH, 125°C, High Pressure (Kolbe-Schmitt Reaction)": {
+        "rules": [
+            # Forms Salicylic Acid (Ortho-carboxylation)
+            "[c:1](-[OH])[cH1:2] >> [c:1](-[OH])[c:2]-[C](=O)[OH]"
+        ],
+        "poisons": PHENOLS_ONLY,
+        "poison_message": "The Kolbe-Schmitt reaction requires a phenoxide ion to undergo electrophilic aromatic substitution with CO2."
+    },
 
-    # 5. Kolbe's Reaction (Phenol specifically)[cite: 1]
-    "CO2 / NaOH, then H+": [
-        "[c:1](-[OH])[cH:2] >> [c:1](-[OH])[c:2]-[C](=O)[OH]" #[cite: 1]
-    ],
-
-    # 6. Reduction of Phenol to Benzene[cite: 1]
-    "Zn dust / Heat": [
-        "[c:1]-[OH] >> [c:1]-[H]" #[cite: 1]
-    ],
-
-    # ==========================================
-    # OLYMPIAD LEVEL ADDITIONS
-    # ==========================================
-
-    # 7. Pinacol-Pinacolone Rearrangement
-    # Acid-catalyzed rearrangement of 1,2-diols to ketones with alkyl migration.
-    "H+ / Heat (Pinacol Rearrangement)": [
-        "[C:1]([OH])-[C:2]([OH]) >> [C:1](=O)-[CH:2]"
-    ],
-
-    # 8. Malaprade Reaction (Periodate Cleavage)
-    # Cleaves 1,2-diols into two carbonyl compounds.
-    "NaIO4 or HIO4": [
-        "[C:1]([OH])-[C:2]([OH]) >> [C:1]=O.[C:2]=O"
-    ],
-
-    # 9. Mitsunobu Reaction (Azide formation)
-    # Inverts stereocenter of an alcohol to form an azide (simplified SMARTS).
-    "PPh3, DEAD, DPPA": [
-        "[#6:1]-[OH] >> [#6:1]-[N]=[N+]=[N-]"
-    ]
+    # --- ETHER CLEAVAGE (THE JEE TRAP) ---
+    "Cold HI (1 Equivalent)": {
+        "rules": [
+            # 1. Alkyl-Aryl Ethers (Anisole derivatives)
+            # The sp2 Aryl-O bond NEVER breaks. Oxygen strictly stays with the ring.
+            "[c:1]-[O:2]-[CX4:3] >> [c:1]-[OH:2].[C:3]-[I]",
+            
+            # 2. Dialkyl Ethers (Assuming SN2 for primary/secondary, Iodine attacks less substituted)
+            # RDKit splits the ether into an alcohol and an alkyl iodide.
+            "[CX4:1]-[O:2]-[CX4:3] >> [C:1]-[OH:2].[C:3]-[I]"
+        ]
+    },
+    "Excess HI / Heat": {
+        "rules": [
+            # 1. Alkyl-Aryl Ethers
+            # Even with excess heat and acid, the Aryl-O bond is untouchable!
+            "[c:1]-[O:2]-[CX4:3] >> [c:1]-[OH:2].[C:3]-[I]",
+            
+            # 2. Dialkyl Ethers
+            # Both sides are cleaved to form two equivalents of alkyl iodides.
+            "[CX4:1]-[O]-[CX4:2] >> [C:1]-[I].[C:2]-[I]"
+        ]
+    }
 }

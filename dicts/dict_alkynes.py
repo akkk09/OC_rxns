@@ -1,47 +1,68 @@
-ALKYNE_RULES = {
-    # 1. Partial Reduction: Lindlar's Catalyst (Produces cis-alkene)[cite: 5]
-    "H2 / Lindlar's Catalyst": [
-        "[C:1]#[C:2] >> [CH:1]=[CH:2]" #[cite: 5]
-    ],
+# ==========================================
+# ALKYNE ENGINE (HYDRATION, REDUCTION, ACIDITY)
+# ==========================================
 
-    # 2. Partial Reduction: Birch Reduction (Produces trans-alkene)[cite: 5]
-    "Na / liq. NH3": [
-        "[C:1]#[C:2] >> [CH:1]=[CH:2]" #[cite: 5]
-    ],
-    
-    # 3. Complete Hydrogenation (Alkane formation)[cite: 5]
-    "H2 / Ni (excess)": [
-        "[C:1]#[C:2] >> [CH2:1]-[CH2:2]" #[cite: 5]
-    ],
-
-    # 4. Kucherov Reaction (Hydration of Alkynes)[cite: 5]
-    "HgSO4 / dil. H2SO4": [
-        "[C:1]#[C:2] >> [C:1](=O)-[CH2:2]" #[cite: 5]
-    ],
-
-    # 5. Terminal Alkyne Test: Ammoniacal AgNO3[cite: 5]
-    "Ammoniacal AgNO3": [
-        "[CH:1]#[C:2] >> [Ag]-[C:1]#[C:2]" #[cite: 5]
-    ],
-    
-    # 6. Complete Halogenation[cite: 5]
-    "Br2 / CCl4 (excess)": [
-        "[C:1]#[C:2] >> [C:1]([Br])([Br])-[C:2]([Br])([Br])" #[cite: 5]
-    ],
-
-    # ==========================================
-    # OLYMPIAD LEVEL ADDITIONS
-    # ==========================================
-
-    # 7. Hydroboration-Oxidation of Terminal Alkynes
-    # Yields aldehydes instead of ketones (Anti-Markovnikov hydration).
-    "Sia2BH then H2O2, OH-": [
-        "[CH:1]#[C:2]-[#6:3] >> [CH:1](=O)-[CH2:2]-[#6:3]"
-    ],
-
-    # 8. Alkyne Alkylation (Homologation)
-    # Deprotonates the terminal alkyne and attaches a methyl group.
-    "NaNH2 then CH3I": [
-        "[CH:1]#[C:2]-[#6:3] >> [CH3]-[C:1]#[C:2]-[#6:3]"
+def generate_kucherov_hydration():
+    return [
+        "[C:1]#[CH1:2] >> [C:1](=O)-[C:2]",
+        "[CH0:1]#[CH0:2] >> [C:1](=O)-[C:2]"
     ]
+
+def generate_hydroboration_oxidation():
+    return [
+        "[C:1]#[CH1:2] >> [C:1]-[C:2]=O",
+        "[CH0:1]#[CH0:2] >> [C:1](=O)-[C:2]"
+    ]
+
+# ==========================================
+# THE REAGENT DICTIONARY
+# ==========================================
+ALKYNE_RULES = {
+    
+    # --- HYDRATION (BUILT-IN TAUTOMERIZATION) ---
+    "HgSO4 / H2SO4 (Kucherov Reaction)": {
+        "rules": generate_kucherov_hydration()
+    },
+    "B2H6 / THF, H2O2 / OH- (Alkyne Hydroboration)": {
+        "rules": generate_hydroboration_oxidation()
+    },
+    
+    # --- REDUCTION (WITH STRICT STEREOCHEMISTRY) ---
+    "H2 / Lindlar Catalyst": {
+        "rules": [
+            # 1. Internal Alkynes -> CIS Alkene (Syn-addition)
+            # Uses directional bonds ( / and \ ) to force substituents to the same side.
+            "[#6:1]-[C:2]#[C:3]-[#6:4] >> [#6:1]/[CH1:2]=[CH1:3]\[#6:4]",
+            
+            # 2. Terminal Alkynes -> Standard Terminal Alkene (No stereochemistry possible)
+            "[#6:1]-[C:2]#[CH1:3] >> [#6:1]-[CH1:2]=[CH2:3]"
+        ]
+    },
+    "Na / Liquid NH3 (Birch Reduction)": {
+        "rules": [
+            # 1. Internal Alkynes -> TRANS Alkene (Anti-addition)
+            # Uses directional bonds ( / and / ) to force substituents to opposite sides.
+            "[#6:1]-[C:2]#[C:3]-[#6:4] >> [#6:1]/[CH1:2]=[CH1:3]/[#6:4]"
+        ],
+        # THE ACID-BASE TRAP (Terminal Alkynes)
+        "poisons": ["[CH1]#[C]"], 
+        "poison_message": "Terminal alkynes possess an acidic hydrogen. Na/NH3 acts as a strong base here, performing an acid-base reaction to form a sodium acetylide rather than reducing the bond!"
+    },
+    "H2 / Ni (Complete Hydrogenation)": {
+        "rules": [
+            "[C:1]#[C:2] >> [C:1]-[C:2]"
+        ]
+    },
+
+    # --- TERMINAL ALKYNE TESTS (ACIDITY) ---
+    "NaNH2 (Sodium Amide)": {
+        "rules": [
+            "[C:1]#[CH1:2] >> [C:1]#[C:2]-[Na]"
+        ]
+    },
+    "Tollens' Reagent (AgNO3 / NH4OH)": {
+        "rules": [
+            "[C:1]#[CH1:2] >> [C:1]#[C:2]-[Ag]" 
+        ]
+    }
 }

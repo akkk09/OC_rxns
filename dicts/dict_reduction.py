@@ -1,46 +1,92 @@
-REDUCTION_RULES = {
-    # 1. Sodium Borohydride (Mild)[cite: 10]
-    "NaBH4": [
-        "[C,CH:1]=[O:2] >> [C,CH:1][OH:2]" #[cite: 10]
-    ],
+# ==========================================
+# REDUCTION ENGINE (LiAlH4, NaBH4, Chemoselectivity)
+# ==========================================
+
+# --- 1. STRONG REDUCER (LiAlH4) ---
+# Reduces almost all polar pi-bonds.
+LIALH4_RULES = [
+    # 1. Aldehydes -> 1-degree Alcohols
+    "[CH1:1]=O >> [C:1]-[OH]",
     
-    # 2. Lithium Aluminum Hydride (Strong)[cite: 10]
-    "LiAlH4": [
-        "[C,CH:1]=[O:2] >> [C,CH:1][OH:2]", #[cite: 10]
-        "[C:1](=[O:2])[OH] >> [CH2:1][OH:2]" #[cite: 10]
-    ],
+    # 2. Ketones -> 2-degree Alcohols 
+    # (Matches a carbonyl carbon bonded to two other carbons)
+    "[CH0:1](=O)(-[#6])-[#6] >> [C:1]-[OH]",
+    
+    # 3. Carboxylic Acids -> 1-degree Alcohols
+    "[CX3:1](=O)[OH] >> [C:1]-[OH]",
+    
+    # 4. Esters -> 1-degree Alcohol + Side Alcohol (CLEAVAGE)
+    # The dot (.) splits the ester into two separate molecules
+    "[CX3:1](=O)-[OX2:2]-[#6:3] >> [C:1]-[OH].[OH]-[C:3]",
+    
+    # 5. Acid Chlorides -> 1-degree Alcohols
+    "[CX3:1](=O)[Cl] >> [C:1]-[OH]",
+    
+    # --- THE NITROGEN TRAPS ---
+    # 6. Amides -> Amines (Oxygen is lost, C-N bond remains intact!)
+    "[CX3:1](=O)-[NX3:2] >> [C:1]-[N:2]",
+    
+    # 7. Nitriles -> 1-degree Amines
+    "[C:1]#[N:2] >> [C:1]-[N:2]",
+    
+    # 8. Nitro Groups -> 1-degree Amines
+    "[N+:1](=O)[O-] >> [N:1]"
+]
 
-    # ==========================================
-    # OLYMPIAD LEVEL ADDITIONS
-    # ==========================================
+# --- 2. MILD REDUCER (NaBH4) ---
+# Highly chemoselective. Only reduces Aldehydes, Ketones, and Acid Chlorides.
+NABH4_RULES = [
+    # 1. Aldehydes -> 1-degree Alcohols
+    "[CH1:1]=O >> [C:1]-[OH]",
+    
+    # 2. Ketones -> 2-degree Alcohols
+    "[CH0:1](=O)(-[#6])-[#6] >> [C:1]-[OH]",
+    
+    # 3. Acid Chlorides -> 1-degree Alcohols
+    "[CX3:1](=O)[Cl] >> [C:1]-[OH]"
+    
+    # Notice the INTENTIONAL ABSENCE of rules for Esters, Acids, and Amides.
+    # If NaBH4 is applied to a molecule with an Ester, the engine will safely ignore it.
+]
 
-    # 3. DIBAL-H (Partial Reduction of Esters)
-    # Crucially stops at the aldehyde when run at -78°C.
-    "DIBAL-H / -78°C (Ester Reduction)": [
-        "[#6:1]-[C:2](=O)-[O]-[#6] >> [#6:1]-[C:2](=O)[H]"
-    ],
-
-    # 4. DIBAL-H (Partial Reduction of Nitriles)
-    # Reduces nitriles to imines, which hydrolyze to aldehydes.
-    "DIBAL-H then H3O+ (Nitrile Reduction)": [
-        "[#6:1]-[C:2]#[N] >> [#6:1]-[C:2](=O)[H]"
-    ],
-
-    # 5. Luche Reduction
-    # Completely regioselective 1,2-reduction of alpha,beta-unsaturated ketones (avoids 1,4-reduction).
-    "NaBH4 / CeCl3": [
-        "[C:1]=[C:2]-[C:3](=O)-[#6:4] >> [C:1]=[C:2]-[C:3](-[OH])-[#6:4]"
-    ],
-
-    # 6. Rosenmund Reduction
-    # Reduces acid chlorides to aldehydes using a poisoned palladium catalyst.
-    "H2 / Pd-BaSO4, Quinoline (Rosenmund)": [
-        "[#6:1]-[C:2](=O)[Cl] >> [#6:1]-[C:2](=O)[H]"
-    ],
-
-    # 7. Stephen Reaction
-    # Reduces nitriles to aldehydes using tin(II) chloride.
-    "SnCl2 / HCl, then H3O+ (Stephen)": [
-        "[#6:1]-[C:2]#[N] >> [#6:1]-[C:2](=O)[H]"
-    ]
+# ==========================================
+# 3. THE REAGENT DICTIONARY
+# ==========================================
+REDUCTION_RULES = {
+    
+    # --- HYDRIDE DONORS ---
+    "LiAlH4 / Ether (Strong Reduction)": {
+        "rules": LIALH4_RULES
+    },
+    "NaBH4 / EtOH (Chemoselective Reduction)": {
+        "rules": NABH4_RULES
+    },
+    "DIBAL-H / -78°C (Ester/Nitrile to Aldehyde)": {
+        "rules": [
+            # Partial reduction at cold temperatures stops at the Aldehyde
+            "[CX3:1](=O)-[OX2:2]-[#6:3] >> [C:1]=O.[OH]-[C:3]", # Ester -> Aldehyde + Alcohol
+            "[C:1]#[N:2] >> [C:1]=O" # Nitrile -> Aldehyde (after hydrolysis)
+        ],
+        "poisons": ["[CX3](=O)[OH]"],
+        "poison_message": "DIBAL-H does not efficiently reduce carboxylic acids."
+    },
+    
+    # --- CLEMMENSEN & WOLFF-KISHNER ---
+    # Both completely strip the carbonyl oxygen to yield an alkane
+    "Zn(Hg) / conc. HCl (Clemmensen Reduction)": {
+        "rules": [
+            "[CH1:1]=O >> [C:1]",                # Aldehyde -> Alkane
+            "[CH0:1](=O)(-[#6])-[#6] >> [C:1]"   # Ketone -> Alkane
+        ],
+        "poisons": ["[OH]"],
+        "poison_message": "Clemmensen uses highly acidic conditions (conc. HCl). Acid-sensitive groups like alcohols may undergo unwanted substitution or elimination."
+    },
+    "NH2NH2 / KOH, heat (Wolff-Kishner Reduction)": {
+        "rules": [
+            "[CH1:1]=O >> [C:1]",
+            "[CH0:1](=O)(-[#6])-[#6] >> [C:1]"
+        ],
+        "poisons": ["[CX4]-[Cl,Br,I]"],
+        "poison_message": "Wolff-Kishner uses highly basic conditions (KOH). Base-sensitive groups like alkyl halides will undergo E2 elimination instead!"
+    }
 }

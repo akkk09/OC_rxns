@@ -1,61 +1,83 @@
-ALKENE_RULES = {
-    # 1. Catalytic Hydrogenation (Syn addition of H2)[cite: 3]
-    "H2 / Pd-C": [
-        "[C:1]=[C:2] >> [CH:1]-[CH:2]" #[cite: 3]
-    ],
+# ==========================================
+# ALKENE ADDITION ENGINE (MARKOVNIKOV LOGIC)
+# ==========================================
 
-    # 2. Halogenation (Anti addition of Bromine)[cite: 3]
-    "Br2 / CCl4": [
-        "[C:1]=[C:2] >> [C:1]([Br])-[C:2]([Br])" #[cite: 3]
-    ],
-
-    # 3. Hydrohalogenation[cite: 3]
-    "HBr": [
-        "[C:1]=[C:2] >> [CH:1]-[C:2]-[Br]" #[cite: 3]
-    ],
-
-    # 4. Acid-Catalyzed Hydration[cite: 3]
-    "H2O / H+": [
-        "[C:1]=[C:2] >> [CH:1]-[C:2]-[OH]" #[cite: 3]
-    ],
-
-    # 5. Reductive Ozonolysis[cite: 3]
-    "O3 then Zn/H2O": [
-        "[C:1]=[C:2] >> [C:1]=O.[C:2]=O" #[cite: 3]
-    ],
-
-    # ==========================================
-    # OLYMPIAD LEVEL ADDITIONS
-    # ==========================================
-
-    # 6. Oxidative Ozonolysis
-    # Cleaves double bonds and further oxidizes aldehydes to carboxylic acids.
-    "O3 then H2O2": [
-        "[CH:1]=[CH:2] >> [C:1](=O)[OH].[C:2](=O)[OH]",
-        "[C:1]=[CH:2] >> [C:1]=O.[C:2](=O)[OH]"
-    ],
-
-    # 7. Hydroboration-Oxidation
-    # Anti-Markovnikov syn-addition of water.
-    "BH3.THF then H2O2, OH-": [
-        "[CH2:1]=[CH:2]-[#6:3] >> [CH2:1]([OH])-[CH2:2]-[#6:3]"
-    ],
-
-    # 8. Epoxidation
-    # Forms an oxirane (epoxide) ring.
-    "mCPBA (Epoxidation)": [
-        "[C:1]=[C:2] >> [C:1]1-[C:2]-O1"
-    ],
-
-    # 9. Syn-Dihydroxylation
-    # Adds two hydroxyl groups to the same face of the alkene.
-    "OsO4 then NaHSO3 OR Cold dilute KMnO4 (Baeyer's)": [
-        "[C:1]=[C:2] >> [C:1]([OH])-[C:2]([OH])"
-    ],
-    
-    # 10. Simmons-Smith Cyclopropanation
-    # Stereospecific addition of a carbene to form a cyclopropane ring.
-    "CH2I2 / Zn(Cu)": [
-        "[C:1]=[C:2] >> [C:1]1-[C:2]-[CH2]1"
+def generate_markovnikov(nu_smarts):
+    """
+    Generates SMARTS for Markovnikov addition.
+    The Nucleophile adds to the more substituted carbon (fewer Hydrogens).
+    """
+    return [
+        # 1. Asymmetric: Terminal Alkene (C=C-R or C=C(R)R) 
+        # C1 has 2H, C2 has 1H or 0H. Nucleophile goes to C2.
+        f"[CH2:1]=[CH1,CH0:2] >> [C:1]-[C:2]-{nu_smarts}",
+        
+        # 2. Asymmetric: Trisubstituted Alkene (R-CH=C(R)R)
+        # C1 has 1H, C2 has 0H. Nucleophile goes to C2.
+        f"[CH1:1]=[CH0:2] >> [C:1]-[C:2]-{nu_smarts}",
+        
+        # 3. Symmetric Ties (Ethene, Disubstituted internal, Tetrasubstituted internal)
+        # Yields a mix or identical products. RDKit maps equal probability natively.
+        f"[CH2:1]=[CH2:2] >> [C:1]-[C:2]-{nu_smarts}",
+        f"[CH1:1]=[CH1:2] >> [C:1]-[C:2]-{nu_smarts}",
+        f"[CH0:1]=[CH0:2] >> [C:1]-[C:2]-{nu_smarts}"
     ]
+
+def generate_anti_markovnikov(nu_smarts):
+    """
+    Generates SMARTS for Anti-Markovnikov addition.
+    The Nucleophile adds to the less substituted carbon (more Hydrogens).
+    """
+    return [
+        # 1. Asymmetric: Terminal Alkene
+        # C1 has 2H, C2 has 1H or 0H. Nucleophile goes to C1.
+        f"[CH2:1]=[CH1,CH0:2] >> [C:1](-{nu_smarts})-[C:2]",
+        
+        # 2. Asymmetric: Trisubstituted Alkene
+        # C1 has 1H, C2 has 0H. Nucleophile goes to C1.
+        f"[CH1:1]=[CH0:2] >> [C:1](-{nu_smarts})-[C:2]",
+        
+        # 3. Symmetric Ties
+        f"[CH2:1]=[CH2:2] >> [C:1](-{nu_smarts})-[C:2]",
+        f"[CH1:1]=[CH1:2] >> [C:1](-{nu_smarts})-[C:2]",
+        f"[CH0:1]=[CH0:2] >> [C:1](-{nu_smarts})-[C:2]"
+    ]
+
+# ==========================================
+# 3. THE REAGENT DICTIONARY
+# ==========================================
+ALKENE_RULES = {
+    # --- HYDROHALOGENATION ---
+    "HBr": {
+        "rules": generate_markovnikov("[Br]"),
+        "poisons": ["[O]-[O]"],
+        "poison_message": "Presence of peroxides triggers a radical mechanism, leading to anti-Markovnikov hydrobromination. Use 'HBr / Peroxide' instead."
+    },
+    "HCl": {
+        "rules": generate_markovnikov("[Cl]") # Peroxide effect does not apply to HCl!
+    },
+    "HBr / Peroxide (Kharasch Effect)": {
+        "rules": generate_anti_markovnikov("[Br]")
+    },
+
+    # --- HYDRATION (ALCOHOL SYNTHESIS) ---
+    "H2O / H+ (Acid Catalyzed Hydration)": {
+        "rules": generate_markovnikov("[OH]")
+    },
+    "B2H6 / THF, H2O2 / OH- (Hydroboration-Oxidation)": {
+        "rules": generate_anti_markovnikov("[OH]")
+    },
+    
+    # --- HALOGENATION (ANTI-ADDITION) ---
+    # RDKit will just map the 2D graph, stereochemistry can be added later if needed.
+    "Br2 / CCl4 (Test for Unsaturation)": {
+        "rules": [
+            "[C:1]=[C:2] >> [C:1](-[Br])-[C:2](-[Br])"
+        ]
+    },
+    "Cl2 / CCl4": {
+        "rules": [
+            "[C:1]=[C:2] >> [C:1](-[Cl])-[C:2](-[Cl])"
+        ]
+    }
 }
