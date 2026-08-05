@@ -1,5 +1,5 @@
 # ==========================================
-# PROTECTING GROUPS ENGINE (MASKING & DEPROTECTION)
+# PROTECTING GROUPS ENGINE (MASKING & DEPROTECTION - OLYMPIAD LEVEL)
 # ==========================================
 
 # ==========================================
@@ -7,63 +7,71 @@
 # ==========================================
 PROTECTING_GROUP_RULES = {
 
-    # --- 1. AMINE PROTECTION (THE ANILINE SAVIOR) ---
-    "(CH3CO)2O / Pyridine (Acetylation)": {
+    # ==========================================
+    # 1. AMINE PROTECTION (ANILINE & ALIPHATIC MASKING)
+    # ==========================================
+
+    "(CH3CO)2O / Pyridine (Amine Acetylation via Nucleophilic Acyl Substitution)": {
         "rules": [
-            # Converts 1-degree aromatic and aliphatic amines to Acetamides
-            # The nitrogen lone pair is now delocalized into the carbonyl, dropping its basicity!
+            # Converts primary aromatic and aliphatic amines to acetamides.
+            # The nitrogen lone pair is delocalized into the carbonyl pi system, drastically lowering basicity and nucleophilicity.
             "[c,CX4:1]-[NX3H2:2] >> [c,C:1]-[NH1:2]-[C](=O)-[CH3]",
             
-            # Converts 2-degree amines to N-substituted Acetamides
+            # Converts secondary amines to N-substituted acetamides
             "[#6:1]-[NX3H1:2]-[#6:3] >> [#6:1]-[N:2](-[#6:3])-[C](=O)-[CH3]"
         ]
     },
     
-    # --- 2. ALCOHOL PROTECTION (SILYL ETHERS) ---
-    "TMSCl / Triethylamine (TMS Protection)": {
+    # ==========================================
+    # 2. ALCOHOL PROTECTION (SILYL ETHER MASKING)
+    # ==========================================
+
+    "TMSCl / Triethylamine (Trimethylsilyl Alcohol Protection)": {
         "rules": [
-            # Caps a primary, secondary, or tertiary alcohol with a Trimethylsilyl group.
-            # This completely removes the acidic proton, rendering the molecule safe for Grignards.
+            # Caps primary, secondary, or tertiary alcohols with a trimethylsilyl group.
+            # Completely removes the acidic proton, rendering the substrate safe for aggressive organometallic reagents.
             "[#6,c:1]-[OX2H1:2] >> [#6,c:1]-[O:2]-[Si](-[CH3])(-[CH3])-[CH3]"
         ]
     },
     
-    # --- 3. CARBONYL PROTECTION (ACETALS/KETALS) ---
-    # (Cross-referenced from Aldehyde/Ketone module for synthetic completeness)
-    "Ethylene Glycol / H+ (Dean-Stark Trap)": {
+    # ==========================================
+    # 3. CARBONYL PROTECTION (ACETAL / KETAL MASKING)
+    # ==========================================
+
+    "Ethylene Glycol / Catalytic Acid, Dean-Stark Trap (Cyclic Acetal / Ketal Synthesis)": {
         "rules": [
-            # Wraps the carbonyl into a stable 5-membered 1,3-dioxolane ring.
-            # Safe against nucleophiles and bases (LiAlH4, Grignards, NaOH).
+            # Converts aldehydes and ketones into stable five-membered 1,3-dioxolane rings.
+            # Renders the carbonyl completely inert against strong nucleophiles and bases (LiAlH4, Grignards, NaOH).
             "[CX3:1]=O >> [C:1]1-[O]-[CH2]-[CH2]-[O]-1"
         ]
     },
 
-    # --- DEPROTECTION (THE UNLOCK CODES) ---
+    # ==========================================
+    # 4. DEPROTECTION PROTOCOLS (ORTHOGONAL UNLOCKING)
+    # ==========================================
     
-    # Universal Acidic Hydrolysis (Unmasks Amines and Carbonyls)
-    "H3O+ / Heat (Global Deprotection)": {
+    "Aqueous H3O+ / Heat (Global Acidic Deprotection)": {
         "rules": [
-            # 1. Cleave Amide back to Amine (Reverses Acetylation)
+            # 1. Cleave acetamides back to primary/secondary amines (reverses acetylation)
             "[c,CX4:1]-[NH1:2]-[C](=O)-[CH3] >> [c,C:1]-[NX3H2:2]",
             "[#6:1]-[N:2](-[#6:3])-[C](=O)-[CH3] >> [#6:1]-[NX3H1:2]-[#6:3]",
             
-            # 2. Cleave Acetal back to Carbonyl
+            # 2. Cleave cyclic acetals/ketals back to parent carbonyls
             "[C:1]1-[O]-[CH2]-[CH2]-[O]-1 >> [C:1]=O",
             
-            # 3. Cleave TMS back to Alcohol
+            # 3. Cleave TMS silyl ethers back to free hydroxyl alcohols
             "[#6,c:1]-[O:2]-[Si](-[CH3])(-[CH3])-[CH3] >> [#6,c:1]-[OX2H1:2]"
         ]
     },
     
-    # Orthogonal Fluoride Cleavage (Strictly for Silyl Ethers)
-    "TBAF / THF (Selective TMS Deprotection)": {
+    "TBAF / THF (Orthogonal Fluoride-Induced Selective TMS Cleavage)": {
         "rules": [
-            # Tetra-n-butylammonium fluoride (TBAF) supplies F- ions.
-            # Silicon has a massive affinity for Fluorine (due to empty d-orbitals).
-            # This selectively snaps off the TMS group while leaving Acetals and Amides completely untouched!
+            # Tetra-n-butylammonium fluoride supplies F- ions. 
+            # The extreme silicon-fluorine bond affinity (driven by vacant d-orbitals) selectively snaps off the TMS group 
+            # while leaving acetals, ketals, and amides completely intact!
             "[#6,c:1]-[O:2]-[Si](-[CH3])(-[CH3])-[CH3] >> [#6,c:1]-[OX2H1:2]"
         ],
-        "poisons": ["[CX3]=O"], # Standard warning, though mathematically unnecessary if rules are exact
-        "poison_message": "TBAF is highly selective for Si-O bonds. It will safely deprotect your alcohol without harming other sensitive groups!"
+        "poisons": ["[CX3]=O"], 
+        "poison_message": "TBAF is highly chemoselective for Si-O bonds. It cleanly unmasks your silyl ether without disturbing other sensitive functional groups."
     }
 }

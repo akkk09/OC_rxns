@@ -1,5 +1,5 @@
 # ==========================================
-# AMINES & NITROGEN COMPOUNDS ENGINE
+# AMINES & NITROGEN COMPOUNDS ENGINE (EXHAUSTIVE OLYMPIAD & GRADUATE LEVEL)
 # ==========================================
 
 # --- NITROGEN TRAPS & POISONS ---
@@ -11,68 +11,85 @@ ARYL_HALIDES = ["[c]-[F,Cl,Br,I]"]
 # ==========================================
 NITROGEN_RULES = {
 
-    # --- 1. THE ISOCYANIDE TEST ---
-    "CHCl3 / KOH, Heat (Carbylamine Reaction)": {
+    # ==========================================
+    # 1. QUALITATIVE IDENTIFICATION (CARBYLAMINE TEST)
+    # ==========================================
+
+    "CHCl3 / KOH, Thermal Flash (Carbylamine Reaction for Primary Amines)": {
         "rules": [
             # Converts ONLY Primary Amines (Aliphatic and Aromatic) to Isocyanides
-            # Note the formal charges: Nitrogen is +, Carbon is -
+            # Formal charges explicitly mapped: Nitrogen is positive (+), Carbon is negative (-)
             "[#6,c:1]-[NX3H2:2] >> [#6,c:1]-[N+:2]#[C-]"
         ],
         "poisons": SECONDARY_TERTIARY_AMINES,
-        "poison_message": "The Carbylamine test strictly requires a primary amine! Secondary and tertiary amines cannot provide the two protons necessary to form the triple bond of the foul-smelling isocyanide."
+        "poison_message": "The Carbylamine test strictly requires a primary amine! Secondary and tertiary amines cannot provide the two necessary protons required to form the triple bond of the foul-smelling isocyanide network."
     },
 
-    # --- 2. DIAZOTIZATION (THE GREAT BIFURCATION) ---
-    "NaNO2 / HCl, 0-5°C (Diazotization)": {
+    # ==========================================
+    # 2. DIAZOTIZATION & BIFURCATION PATHWAYS
+    # ==========================================
+
+    "NaNO2 / Aqueous HCl, 0-5°C (Diazotization Cascade)": {
         "rules": [
-            # 1. Aromatic Primary Amines -> Stable Diazonium Salt
-            # Resonance stabilizes the N2+ leaving group at low temperatures.
+            # 1. Aromatic Primary Amines -> Stable Aromatic Diazonium Salt
+            # Resonance stabilization allows the N2+ leaving group to persist at low temperatures.
             "[c:1]-[NX3H2:2] >> [c:1]-[N+:2]#[N]",
             
-            # 2. Aliphatic Primary Amines -> Alcohols
-            # The aliphatic diazonium ion is highly unstable, instantly losing N2 gas
-            # to form a carbocation, which is trapped by water.
+            # 2. Aliphatic Primary Amines -> Carbocation Intermediates -> Alcohols / Alkenes
+            # The aliphatic diazonium ion is highly unstable, instantly ejecting N2 gas 
+            # to form a reactive carbocation trapped by solvent water.
             "[CX4:1]-[NX3H2:2] >> [C:1]-[OH]"
         ],
         "poisons": SECONDARY_TERTIARY_AMINES,
-        "poison_message": "Secondary amines form a yellow oily N-nitrosamine. Tertiary amines simply undergo acid-base protonation or ring nitrosation. Only primary amines form the diazonium species!"
+        "poison_message": "Diazotization bifurcation failure: Secondary amines form yellow oily N-nitrosamines. Tertiary amines undergo protonation or ring nitrosation. Only primary amines generate the diazonium species."
     },
 
-    # --- 3. GABRIEL PHTHALIMIDE SYNTHESIS ---
-    # (Macro: Phthalimide + KOH + R-X -> -> Primary Amine)
-    "Gabriel Phthalimide Sequence (Macro)": {
+    # ==========================================
+    # 3. GABRIEL PHTHALIMIDE SYNTHESIS
+    # ==========================================
+
+    "Gabriel Phthalimide Sequence (Base-Mediated Primary Amine Synthesis)": {
         "rules": [
-            # Strictly converts primary/secondary Alkyl Halides to Primary Amines
+            # Strictly converts accessible primary and secondary alkyl halides into primary amines via SN2 substitution
             "[CX4:1]-[Cl,Br,I] >> [C:1]-[NH2]"
         ],
-        "poisons": ARYL_HALIDES + ["[CX4H0]-[Cl,Br,I]"], # Aryl halides and Tertiary halides
-        "poison_message": "Gabriel Phthalimide Synthesis relies on an SN2 attack by the bulky phthalimide anion. Aryl halides cannot undergo SN2 due to sp2 partial double bond character, meaning you CANNOT synthesize Aniline this way! Tertiary halides will strictly undergo E2 elimination."
+        "poisons": ARYL_HALIDES + ["[CX4H0]-[Cl,Br,I]"], 
+        "poison_message": "Gabriel Phthalimide failure: Relies on a clean SN2 nucleophilic attack by the bulky phthalimide anion. Aryl halides cannot undergo SN2 due to sp2 partial double-bond character (aniline synthesis is impossible here), and tertiary halides strictly undergo quantitative E2 elimination."
     },
 
-    # --- 4. EXHAUSTIVE METHYLATION & ELIMINATION ---
-    "CH3I (Excess) / Ag2O, Heat (Hofmann Elimination)": {
+    # ==========================================
+    # 4. EXHAUSTIVE METHYLATION & HOFMANN ELIMINATION
+    # ==========================================
+
+    "CH3I (Excess) followed by Ag2O / Heat (Exhaustive Hofmann Elimination)": {
         "rules": [
-            # E2 Beta-Elimination yielding the LEAST substituted alkene (Anti-Saytzeff / Hofmann Rule)
-            # The bulky quaternary ammonium leaving group dictates the stereochemistry.
+            # E2 Beta-Elimination yielding the LEAST substituted alkene (Anti-Zaitsev / Hofmann Product)
+            # The bulky quaternary ammonium leaving group controls the transition state geometry.
             "[CH3,CH2,CH1:1]-[CX4:2]-[NX3,NX4+] >> [C:1]=[C:2]"
         ]
     },
 
-    # --- 5. REDUCTION OF NITRO COMPOUNDS ---
-    "Sn / HCl or Fe / HCl (Acidic Reduction)": {
+    # ==========================================
+    # 5. REDUCTION OF NITRO COMPOUNDS
+    # ==========================================
+
+    "Sn / Concentrated HCl or Fe / HCl (Chemoselective Acidic Nitro Reduction)": {
         "rules": [
-            # The industrial and laboratory standard for converting Nitro to Amine
+            # The standard laboratory and industrial protocol for reducing aromatic and aliphatic nitro groups to primary amines
             "[#6,c:1]-[N+](=O)[O-] >> [#6,c:1]-[NH2]"
         ]
     },
     
-    # --- 6. SANDMEYER / GATTERMANN REACTIONS ---
-    "CuCl / HCl (Sandmeyer Reaction)": {
+    # ==========================================
+    # 6. SANDMEYER & GATTERMANN TRANSFORMATIONS
+    # ==========================================
+
+    "CuCl / Aqueous HCl (Sandmeyer Chlorination)": {
         "rules": [
-            # Replaces the aromatic diazonium group with a Chloride via radical mechanism
+            # Replaces the aromatic diazonium group with a chloride atom via a copper-mediated radical mechanism
             "[c:1]-[N+]#[N] >> [c:1]-[Cl]"
         ],
         "poisons": ["[CX4]-[N+]#[N]"],
-        "poison_message": "Aliphatic diazonium salts decompose instantly. The Sandmeyer reaction requires the transient stability of an AROMATIC diazonium salt."
+        "poison_message": "Sandmeyer failure: Aliphatic diazonium salts decompose spontaneously into nitrogen gas. The reaction requires the transient low-temperature stability of an AROMATIC diazonium salt."
     }
 }

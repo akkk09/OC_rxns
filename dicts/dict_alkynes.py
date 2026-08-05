@@ -1,16 +1,30 @@
 # ==========================================
-# ALKYNE ENGINE (HYDRATION, REDUCTION, ACIDITY)
+# ALKYNE ENGINE (EXHAUSTIVE OLYMPIAD & GRADUATE LEVEL)
 # ==========================================
 
 def generate_kucherov_hydration():
+    """
+    Acid and Mercury(II)-catalyzed Markovnikov hydration of alkynes.
+    Proceeds via mercurinium ion formation followed by water attack and tautomerization.
+    """
     return [
+        # Terminal alkynes -> Methyl ketones (Markovnikov orientation via stable secondary oxonium intermediates)
         "[C:1]#[CH1:2] >> [C:1](=O)-[C:2]",
+        
+        # Internal unsymmetrical alkynes -> Constitutional ketone mixtures based on electronic stabilization
         "[CH0:1]#[CH0:2] >> [C:1](=O)-[C:2]"
     ]
 
 def generate_hydroboration_oxidation():
+    """
+    Regioselective Anti-Markovnikov Hydration via sterically hindered organoboranes (Sia2BH or Borane).
+    Terminal alkynes yield aldehydes following oxidation.
+    """
     return [
+        # Terminal alkynes -> Aldehydes (Anti-Markovnikov regioselectivity)
         "[C:1]#[CH1:2] >> [C:1]-[C:2]=O",
+        
+        # Internal alkynes -> Ketones
         "[CH0:1]#[CH0:2] >> [C:1](=O)-[C:2]"
     ]
 
@@ -19,50 +33,102 @@ def generate_hydroboration_oxidation():
 # ==========================================
 ALKYNE_RULES = {
     
-    # --- HYDRATION (BUILT-IN TAUTOMERIZATION) ---
-    "HgSO4 / H2SO4 (Kucherov Reaction)": {
+    # ==========================================
+    # 1. HYDRATION & TAUTOMERIC CONTROL
+    # ==========================================
+    
+    "HgSO4 / Aqueous H2SO4 (Kucherov Markovnikov Hydration to Ketones)": {
         "rules": generate_kucherov_hydration()
     },
-    "B2H6 / THF, H2O2 / OH- (Alkyne Hydroboration)": {
+    
+    "Sterically Hindered Hydroboration followed by Alkaline H2O2 (Anti-Markovnikov Hydration)": {
         "rules": generate_hydroboration_oxidation()
     },
-    
-    # --- REDUCTION (WITH STRICT STEREOCHEMISTRY) ---
-    "H2 / Lindlar Catalyst": {
+
+    "HBr (1 Equivalent) / Ionic Addition (Markovnikov Vinyl Bromide Synthesis)": {
         "rules": [
-            # 1. Internal Alkynes -> CIS Alkene (Syn-addition)
-            # Uses directional bonds ( / and \ ) to force substituents to the same side.
+            # Electrophilic addition across triple bonds following Markovnikov regioselectivity
+            "[C:1]#[CH1:2] >> [C:1](-[Br])=[CH2:2]"
+        ]
+    },
+    
+    "Excess HBr / Ionic Addition (Geminal Dihalide Formation)": {
+        "rules": [
+            # Exhaustive hydrohalogenation yielding geminal dihalides via sequential Markovnikov additions
+            "[C:1]#[C:2] >> [C:1]([Br])([Br])-[CH2:2]"
+        ]
+    },
+    
+    # ==========================================
+    # 2. STEREOSPECIFIC REDUCTION PATHWAYS
+    # ==========================================
+    
+    "H2 / Poisoned Palladium - Lindlar Catalyst (Stereospecific Syn-Hydrogenation to Z-Alkenes)": {
+        "rules": [
+            # Internal Alkynes -> CIS (Z) Alkenes via concerted heterogeneous metal-surface syn-addition
             "[#6:1]-[C:2]#[C:3]-[#6:4] >> [#6:1]/[CH1:2]=[CH1:3]\[#6:4]",
             
-            # 2. Terminal Alkynes -> Standard Terminal Alkene (No stereochemistry possible)
+            # Terminal Alkynes -> Unsubstituted Terminal Alkenes
             "[#6:1]-[C:2]#[CH1:3] >> [#6:1]-[CH1:2]=[CH2:3]"
         ]
     },
-    "Na / Liquid NH3 (Birch Reduction)": {
+    
+    "Na / Liquid NH3 (Dissolving Metal Birch Reduction to E-Alkenes)": {
         "rules": [
-            # 1. Internal Alkynes -> TRANS Alkene (Anti-addition)
-            # Uses directional bonds ( / and / ) to force substituents to opposite sides.
+            # Internal Alkynes -> TRANS (E) Alkenes via stepwise single-electron transfer (SET) and vinyl anion inversion
             "[#6:1]-[C:2]#[C:3]-[#6:4] >> [#6:1]/[CH1:2]=[CH1:3]/[#6:4]"
         ],
-        # THE ACID-BASE TRAP (Terminal Alkynes)
         "poisons": ["[CH1]#[C]"], 
-        "poison_message": "Terminal alkynes possess an acidic hydrogen. Na/NH3 acts as a strong base here, performing an acid-base reaction to form a sodium acetylide rather than reducing the bond!"
+        "poison_message": "Birch reduction intervention: Terminal alkynes possess an activated acidic sp-hybridized C-H proton (pKa ~ 25). Dissolving metals act as strong Brønsted bases, abstracting the proton to generate an unreactive sodium acetylide salt instead of performing reduction."
     },
-    "H2 / Ni (Complete Hydrogenation)": {
+    
+    "H2 / Excess Raney Ni or Pt Catalyst (Exhaustive Hydrogenation to Alkanes)": {
         "rules": [
+            # Complete saturation of triple bonds down to fully saturated saturated alkanes
             "[C:1]#[C:2] >> [C:1]-[C:2]"
         ]
     },
 
-    # --- TERMINAL ALKYNE TESTS (ACIDITY) ---
-    "NaNH2 (Sodium Amide)": {
+    # ==========================================
+    # 3. HALOGENATION & OXIDATIVE CLEAVAGE
+    # ==========================================
+
+    "Br2 (1 Equivalent) / CCl4 (Stereospecific Anti-Addition Dihalogenation)": {
         "rules": [
+            # Halogenation proceeding via cyclic halonium intermediates, yielding trans-dihaloalkenes
+            "[#6:1]-[C:2]#[C:3]-[#6:4] >> [#6:1]/[C:2](-[Br])=[C:3](-[Br])/[#6:4]"
+        ]
+    },
+
+    "O3 followed by Aqueous Workup or KMnO4 (Oxidative Cleavage of Alkynes)": {
+        "rules": [
+            # Oxidative cleavage breaking triple bonds to yield corresponding carboxylic acids
+            "[C:1]#[C:2] >> [C:1](=O)[OH].[C:2](=O)[OH]"
+        ]
+    },
+
+    # ==========================================
+    # 4. TERMINAL ALKYNE ACIDITY & METAL ACETYLIDES
+    # ==========================================
+
+    "NaNH2 / Liquid Ammonia (Strong Base Terminal Deprotonation)": {
+        "rules": [
+            # Deprotonation of terminal alkyne to synthesize nucleophilic sodium acetylides for chain homologation
             "[C:1]#[CH1:2] >> [C:1]#[C:2]-[Na]"
         ]
     },
-    "Tollens' Reagent (AgNO3 / NH4OH)": {
+    
+    "Ammoniacal AgNO3 / Aqueous NH3 (Tollens Qualitative Detection of Terminal Alkynes)": {
         "rules": [
+            # Precipitation of white/off-white silver acetylide complexes confirming terminal triple bonds
             "[C:1]#[CH1:2] >> [C:1]#[C:2]-[Ag]" 
+        ]
+    },
+
+    "Ammoniacal CuCl / Aqueous NH3 (Cuprous Acetylide Precipitation Test)": {
+        "rules": [
+            # Formation of characteristic red/brown copper(I) acetylide precipitates
+            "[C:1]#[CH1:2] >> [C:1]#[C:2]-[Cu]"
         ]
     }
 }

@@ -1,84 +1,122 @@
 # ==========================================
-# CARBOHYDRATES & BIOMOLECULES ENGINE
+# CARBOHYDRATES & BIOMOLECULES ENGINE (EXHAUSTIVE OLYMPIAD LEVEL)
 # ==========================================
 
-# --- BIOMOLECULE IDENTIFIERS ---
-# Ketoses (like Fructose) resist mild oxidation
+# --- ADVANCED STRUCTURAL IDENTIFIERS & POISONS ---
 KETOSE_TRAP = ["[CH2](-[OH])-[C](=O)-[CH1](-[OH])"] 
-
-# Alpha-Amino Acids (for the Ninhydrin test)
-ALPHA_AMINO_ACID = ["[NX3H2,NX3H3+]-[CX4H1,CX4H2]-[CX3](=O)[OH,O-]"]
+ALPHA_AMINO_ACID = ["[NX3H2,NX3H3+]-[CX4H1]-[CX3](=O)[OH,O-]"]
+PROTECTED_AMINE_PROTECTION = ["[CX4](C)(C)(C)-OC(=O)-[NX3H1]"] # Boc-protected amino acids
+PROTECTED_ACID_PROTECTION = ["[CX4](C)(C)(C)-[OX2]-C(=O)"] # t-Butyl ester protected acids
 
 # ==========================================
 # THE REAGENT DICTIONARY
 # ==========================================
 BIOMOLECULE_RULES = {
 
-    # --- 1. CARBOHYDRATE OXIDATION (THE PROOF OF ALDEHYDE) ---
-    "Br2 / H2O (Mild Oxidation)": {
+    # ==========================================
+    # 1. CARBOHYDRATE CHEMISTRY & STRUCTURAL PROOFS
+    # ==========================================
+    
+    "Bromine Water / Aqueous Buffer (Mild Aldose Oxidation)": {
         "rules": [
-            # Selectively oxidizes the Aldehyde to a Carboxylic Acid (Glucose -> Gluconic Acid)
-            # Completely ignores primary and secondary alcohols!
+            # Selective oxidation of the C1 aldehyde group of aldoses to yield aldonic acids 
+            # while leaving primary and secondary alcohol matrices untouched.
             "[CH1:1]=O >> [C:1](=O)[OH]"
         ],
         "poisons": KETOSE_TRAP,
-        "poison_message": "Bromine water is a mild oxidizing agent. It successfully oxidizes aldoses (like Glucose) to aldonic acids, but it cannot oxidize ketoses (like Fructose)!"
+        "poison_message": "Bromine Water oxidation failure: Mild aqueous bromine is chemoselective for aldoses. Ketoses (such as fructose) resist oxidation under these conditions due to the lack of a free aldehyde hydrogen."
     },
     
-    "Conc. HNO3 / Heat (Strong Oxidation)": {
+    "Concentrated Nitric Acid / Thermal Oxidation (Aldaric Acid Synthesis)": {
         "rules": [
-            # Oxidizes BOTH the terminal aldehyde AND the terminal primary alcohol
-            # (Glucose -> Saccharic / Glucaric Acid)
+            # Vigorous oxidation converting both the terminal C1 aldehyde and C6 primary alcohol 
+            # into carboxylic acid groups, yielding symmetrical or unsymmetrical aldaric (glucaric) acids.
             "[CH1:1]=O >> [C:1](=O)[OH]",
             "[CH2:1]-[OH] >> [C:1](=O)[OH]"
         ]
     },
 
-    # --- 2. CARBOHYDRATE REDUCTION (THE PROOF OF THE CARBON SKELETON) ---
-    "HI / Red P, 100°C (Exhaustive Reduction)": {
+    "Excess Hydriodic Acid / Red Phosphorus, 100°C (Exhaustive Deoxygenation)": {
         "rules": [
-            # The "Sledgehammer". Strips all oxygen from the molecule.
-            # Converts all aldehydes, ketones, and alcohols straight to alkanes.
-            # (Glucose / Fructose -> n-Hexane)
+            # Reduction of all polyhydroxy aldehyde/ketone systems down to straight-chain alkanes (n-hexane proof).
             "[CH1:1]=O >> [CH3:1]",
             "[C:1](=O)-[#6] >> [CH2:1]-C",
             "[CX4:1]-[OH] >> [C:1]"
         ]
     },
 
-    # --- 3. OSAZONE FORMATION (THE EPIMER TRAP) ---
-    "Ph-NH-NH2 (3 Equivalents) / Heat": {
+    "Excess Phenylhydrazine (3 Equivalents) / Mild Heat (Osazone Crystallization)": {
         "rules": [
-            # 1. Aldoses (Glucose / Mannose)
-            # C1 Aldehyde and C2 Alcohol are both converted to hydrazones.
+            # 1. Aldoses (Glucose, Mannose, Galactose matrices): Oxidation at C2 followed by triple condensation,
+            # resulting in identical crystalline osazone networks that prove epimeric configurations at C3, C4, C5.
             "[CH1:1](=O)-[CH1:2]-[OH] >> [C:1](=N-[NH]-[c]1ccccc1)-[C:2](=N-[NH]-[c]1ccccc1)",
             
-            # 2. Ketoses (Fructose)
-            # C1 Primary Alcohol and C2 Ketone are both converted to hydrazones.
+            # 2. Ketoses (Fructose matrices): Oxidation of terminal C1 and C2 yielding the identical osazone framework.
             "[CH2:1](-[OH])-[C:2]=O >> [C:1](=N-[NH]-[c]1ccccc1)-[C:2](=N-[NH]-[c]1ccccc1)"
         ],
-        "poisons": ["[CH1](=O)-[CH2]-[#6]"], # Lacks the adjacent alpha-hydroxyl
-        "poison_message": "Osazone formation strictly requires an alpha-hydroxyl carbonyl system. Standard aldehydes and ketones will only consume 1 equivalent to form a simple hydrazone."
+        "poisons": ["[CH1](=O)-[CH2]-[#6]"], 
+        "poison_message": "Osazone formation failure: Requires an adjacent alpha-hydroxyl carbonyl (acyloin) system. Standard isolated aldehydes/ketones consume only a single equivalent to yield basic hydrazones."
     },
 
-    # --- 4. AMINO ACIDS (NINHYDRIN TEST) ---
-    "Ninhydrin / Heat": {
+    "Acetic Anhydride / Pyridine (Pentaacetate Derivatization)": {
         "rules": [
-            # Strecker Degradation of Alpha-Amino Acids
-            # Cleaves the amino acid into an Aldehyde, CO2, and (conceptually) Ruhemann's Purple.
-            # RDKit will isolate the R-group into the corresponding aldehyde.
+            # Exhaustive acetylation of all free hydroxyl groups and the anomeric center 
+            # to confirm the exact number of hydroxyl functionalities in an aldose or ketose.
+            "[CX4:1]-[OH] >> [C:1]-[O]-C(=O)-CH3",
+            "[CH1:1]=O >> [C:1]-[O]-C(=O)-CH3"
+        ]
+    },
+
+    # ==========================================
+    # 2. AMINO ACIDS, PEPTIDES & PROTEIN STRUCTURE
+    # ==========================================
+
+    "Ninhydrin / Thermal Deamination (Ruhemann's Purple Assay)": {
+        "rules": [
+            # Oxidative decarboxylation of alpha-amino acids yielding carbon dioxide, an aldehyde corresponding to the R-group,
+            # and condensation with a second ninhydrin molecule to form the characteristic purple chromophore.
             "[NX3]-[CX4H1:1](-[#6:2])-[CX3](=O)[OH] >> [C:1](=O)-[#6:2].O=C=O"
         ],
-        "poisons": ["[NX3]-[CX4]-[CX4]-[CX3](=O)[OH]"], # Beta or Gamma amino acids
-        "poison_message": "The Ninhydrin test is highly specific for ALPHA-amino acids. Beta or gamma amino acids do not readily undergo the required decarboxylative deamination to yield Ruhemann's purple!"
+        "poisons": ["[NX3]-[CX4]-[CX4]-[CX3](=O)[OH]"], # Non-alpha amino acids
+        "poison_message": "Ninhydrin test failure: Strictly specific for alpha-amino acids. Beta, gamma, or unactivated amino acids do not undergo the requisite concerted decarboxylative deamination."
     },
 
-    # --- 5. PEPTIDE BOND FORMATION ---
-    "DCC (N,N'-Dicyclohexylcarbodiimide)": {
+    "DCC / HOBt Coupling (Carbodiimide-Mediated Peptide Synthesis)": {
         "rules": [
-            # Bimolecular Coupling: Carboxylic Acid + Amine -> Amide (Peptide Bond)
-            # The dot (.) brings two distinct amino acids together
+            # Dehydrative condensation coupling a carboxylic acid component with an alpha-amino component 
+            # to generate an invariant peptide amide linkage.
             "[CX3:1](=O)[OH].[NX3H2:2]-[CX4] >> [C:1](=O)-[NH1:2]-[CX4]"
+        ]
+    },
+
+    "Boc2O / Base (Tert-Butylloxycarbonyl Amine Protection)": {
+        "rules": [
+            # Protection of primary and secondary amine termini in amino acids to prevent self-condensation 
+            # during peptide chain elongation.
+            "[NX3H2:1]-[CX4] >> [N:1](-H)-C(=O)-OC(C)(C)C"
+        ]
+    },
+
+    "Trifluoroacetic Acid / CH2Cl2 (Boc Deprotection)": {
+        "rules": [
+            # Acidolytic cleavage of Boc protecting groups back to free ammonium trifluoroacetate salts.
+            "[NX3H1:1]-C(=O)-OC(C)(C)C >> [N:1]H2"
+        ]
+    },
+
+    "Sanger's Reagent (1-fluoro-2,4-dinitrobenzene) followed by Hydrolysis (N-Terminal Sequencing)": {
+        "rules": [
+            # Nucleophilic aromatic substitution (SNAr) labeling the N-terminal amine of a peptide chain,
+            # allowing acid-catalyzed hydrolysis to isolate the tagged N-terminal dinitrophenyl amino acid.
+            "[NX3H2:1]-[CX4] >> [N:1]--[c]1[cH][c](-[N+](=O)[O-])[cH][c](-[N+](=O)[O-])[cH]1" # Representational N-aryl tag mapping
+        ]
+    },
+
+    "Edman's Reagent (Phenyl Isothiocyanate) followed by Acid Cleavage (Stepwise Sequencing)": {
+        "rules": [
+            # Cyclization yielding an anilinothiazolinone derivative which converts to a stable phenylthiohydantoin (PTH) 
+            # amino acid without cleaving the remaining internal peptide backbone.
+            "[NX3H2:1]-[CX4]-[CX3](=O)-[NH1] >> [N:1]-C(=S)-NH-c1ccccc1" # Structural thiourea intermediate mapping
         ]
     }
 }
