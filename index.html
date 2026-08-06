@@ -2,33 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RXN</title>
-    <link rel="stylesheet" href="style.css">
+    <title>RXN Simulator</title>
+    <!-- Modularized CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/autocomplete.css">
+    <link rel="stylesheet" href="css/modals.css">
 </head>
 <body>
     <div class="topbar">
         <h3>Reaction Prediction</h3>
         <div class="controls">
-            <button id="builderBtn" class="settings-btn" title="Reagent Builder"><img src="plus.svg" alt="" class="plus-icon"></button>
-            <button id="settingsBtn" class="settings-btn" title="Manage Dictionaries"><img src="settings.svg" alt="" class="settings-icon"></button>
+            <button id="builderBtn" class="settings-btn" title="Reagent Builder"><img src="plus.svg" alt="+" class="plus-icon"></button>
+            <button id="settingsBtn" class="settings-btn" title="Manage Dictionaries"><img src="settings.svg" alt="Settings" class="settings-icon"></button>
             
-            <!-- Custom Autocomplete Wrapper replacing the datalist -->
             <div class="autocomplete-wrapper">
                 <input type="text" id="reagent" placeholder="Search or chain (R1 -> R2)" autocomplete="off">
                 <div id="custom-dropdown" class="custom-dropdown"></div>
             </div>
             
-            <button onclick="runReaction()">Predict Product</button>
+            <button id="predictBtn">Predict Product</button>
         </div>
     </div>
     
+    <!-- Dictionary Settings Modal -->
     <div id="dictModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Engine Configuration</h2>
                 <span class="close-btn" id="closeModal">&times;</span>
             </div>
-            
             <div class="modal-body">
                 <h3>Default Dictionaries</h3>
                 <div id="defaultDicts" class="dict-checkboxes">
@@ -51,9 +53,7 @@
                     <label><input type="checkbox" value="carboxylic" checked> Carboxylic Acids</label>
                     <label><input type="checkbox" value="eas" checked> EAS</label>
                 </div>
-
                 <hr>
-
                 <h3>Custom Dictionary (JSON)</h3>
                 <p class="helper-text">Upload your own reaction rules in JSON format.</p>
                 <input type="file" id="customDictUpload" accept=".json">
@@ -62,6 +62,7 @@
         </div>
     </div>
 
+    <!-- Reagent Builder Modal -->
     <div id="builderModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -74,26 +75,21 @@
                         <label>Reagent Name & Conditions</label>
                         <input type="text" id="rbName" class="form-input" placeholder="e.g., Magic Catalyst / 25°C" required>
                     </div>
-                    
                     <div class="form-group">
                         <label>SMARTS Transformation Rule</label>
                         <input type="text" id="rbRule" class="form-input" placeholder="e.g., [C:1]=[C:2] >> [C:1]-[OH]" required>
                         <p class="helper-text">Standard RDKit reaction mapping format.</p>
                     </div>
-
                     <hr>
-                    
                     <h3>Optional: Traps & Poisons</h3>
                     <div class="form-group">
                         <label>Poison SMARTS (Incompatible Groups)</label>
                         <input type="text" id="rbPoison" class="form-input" placeholder="e.g., [NX3H2] (Primary Amines)">
                     </div>
-                    
                     <div class="form-group">
                         <label>Poison Error Message</label>
                         <input type="text" id="rbPoisonMsg" class="form-input" placeholder="e.g., Primary amines destroy this catalyst!">
                     </div>
-
                     <button type="submit" class="submit-btn">Inject into Engine</button>
                     <div id="builderStatus" class="upload-status"></div>
                 </form>
@@ -101,8 +97,9 @@
         </div>
     </div>
 
-    <iframe id="ketcher-frame" src="ketcher/index.html"></iframe>
+    <iframe id="ketcher-frame" src="ketcher/index.html" loading="lazy"></iframe>
 
-    <script src="script.js"></script>
+    <!-- Modularized JS Initialization -->
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

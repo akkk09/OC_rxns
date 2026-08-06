@@ -1,0 +1,21 @@
+body { 
+    background: #000; color: #fff; font-family: sans-serif; 
+    margin: 0; padding: 0; display: flex; flex-direction: column; 
+    height: 100vh; overflow: hidden; 
+}
+
+.topbar { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 15px 20px; border-bottom: 1px solid #333; 
+}
+.topbar h3 { margin: 0; }
+
+.controls { display: flex; gap: 10px; align-items: center; }
+
+button#predictBtn { 
+    background: #fff; color: #000; font-weight: bold; border: none; 
+    padding: 10px 15px; border-radius: 6px; cursor: pointer; transition: background 0.2s;
+}
+button#predictBtn:hover { background: #ddd; }
+
+#ketcher-frame { flex-grow: 1; width: 100%; border: none; background: #fff; }
