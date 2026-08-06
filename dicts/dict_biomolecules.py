@@ -93,7 +93,7 @@ BIOMOLECULE_RULES = {
         "rules": [
             # Protection of primary and secondary amine termini in amino acids to prevent self-condensation 
             # during peptide chain elongation.
-            "[NX3H2:1]-[CX4] >> [N:1](-H)-C(=O)[CX4](C)(C)C"
+            "[NX3H2:1]-[CX4] >> [N:1](-H)-C(=O)C(C)(C)C"
         ]
     },
 
