@@ -7,7 +7,7 @@ export const AppState = {
 
 // Change this to your live Render URL once deployed (e.g., 'https://rxn-api.onrender.com')
 // If running everything on the same server, you can change this back to an empty string ''.
-const API_BASE_URL = 'http://localhost:8000'; 
+const API_BASE_URL = 'https://oc-rxns.onrender.com'; 
 
 export async function fetchReagents() {
     try {
