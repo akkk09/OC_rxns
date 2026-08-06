@@ -9,12 +9,98 @@
     <div class="topbar">
         <h3>Reaction Prediction</h3>
         <div class="controls">
-            <input type="text" id="reagent" list="reagent-list" placeholder="Search or chain (R1 -> R2)">
-            <datalist id="reagent-list"></datalist>
+            <button id="builderBtn" class="settings-btn" title="Reagent Builder"><img src="plus.svg" alt="" class="plus-icon"></button>
+            <button id="settingsBtn" class="settings-btn" title="Manage Dictionaries"><img src="settings.svg" alt="" class="settings-icon"></button>
+            
+            <!-- Custom Autocomplete Wrapper replacing the datalist -->
+            <div class="autocomplete-wrapper">
+                <input type="text" id="reagent" placeholder="Search or chain (R1 -> R2)" autocomplete="off">
+                <div id="custom-dropdown" class="custom-dropdown"></div>
+            </div>
+            
             <button onclick="runReaction()">Predict Product</button>
         </div>
     </div>
     
+    <div id="dictModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Engine Configuration</h2>
+                <span class="close-btn" id="closeModal">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <h3>Default Dictionaries</h3>
+                <div id="defaultDicts" class="dict-checkboxes">
+                    <label><input type="checkbox" value="heterocycles" checked> Heterocycles</label>
+                    <label><input type="checkbox" value="macros" checked> Macro & Grignard</label>
+                    <label><input type="checkbox" value="nitrogen" checked> Amines & Nitrogen</label>
+                    <label><input type="checkbox" value="oxidation" checked> Oxidation</label>
+                    <label><input type="checkbox" value="polymers_poc" checked> Polymers & POC</label>
+                    <label><input type="checkbox" value="protecting_groups" checked> Protecting Groups</label>
+                    <label><input type="checkbox" value="reduction" checked> Reduction</label>
+                    <label><input type="checkbox" value="advanced_rearrangements" checked> Advanced Rearrangements</label>
+                    <label><input type="checkbox" value="alcohols_phenols" checked> Alcohols & Phenols</label>
+                    <label><input type="checkbox" value="aldehydes_ketones" checked> Aldehydes & Ketones</label>
+                    <label><input type="checkbox" value="alkenes" checked> Alkenes</label>
+                    <label><input type="checkbox" value="alkyl_halides" checked> Alkyl Halides</label>
+                    <label><input type="checkbox" value="alkynes" checked> Alkynes</label>
+                    <label><input type="checkbox" value="amines" checked> Amines</label>
+                    <label><input type="checkbox" value="aromatics" checked> Aromatics</label>
+                    <label><input type="checkbox" value="biomolecules" checked> Biomolecules</label>
+                    <label><input type="checkbox" value="carboxylic" checked> Carboxylic Acids</label>
+                    <label><input type="checkbox" value="eas" checked> EAS</label>
+                </div>
+
+                <hr>
+
+                <h3>Custom Dictionary (JSON)</h3>
+                <p class="helper-text">Upload your own reaction rules in JSON format.</p>
+                <input type="file" id="customDictUpload" accept=".json">
+                <div id="uploadStatus" class="upload-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="builderModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Bring Your Own Reagent</h2>
+                <span class="close-btn" id="closeBuilderModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="reagentForm">
+                    <div class="form-group">
+                        <label>Reagent Name & Conditions</label>
+                        <input type="text" id="rbName" class="form-input" placeholder="e.g., Magic Catalyst / 25°C" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SMARTS Transformation Rule</label>
+                        <input type="text" id="rbRule" class="form-input" placeholder="e.g., [C:1]=[C:2] >> [C:1]-[OH]" required>
+                        <p class="helper-text">Standard RDKit reaction mapping format.</p>
+                    </div>
+
+                    <hr>
+                    
+                    <h3>Optional: Traps & Poisons</h3>
+                    <div class="form-group">
+                        <label>Poison SMARTS (Incompatible Groups)</label>
+                        <input type="text" id="rbPoison" class="form-input" placeholder="e.g., [NX3H2] (Primary Amines)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Poison Error Message</label>
+                        <input type="text" id="rbPoisonMsg" class="form-input" placeholder="e.g., Primary amines destroy this catalyst!">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Inject into Engine</button>
+                    <div id="builderStatus" class="upload-status"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <iframe id="ketcher-frame" src="ketcher/index.html"></iframe>
 
     <script src="script.js"></script>

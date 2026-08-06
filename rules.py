@@ -5,7 +5,6 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
-## someone save me
 from dicts.dict_advanced_rearrangements import ADVANCED_REARRANGEMENT_RULES
 from dicts.dict_alcohols_phenols import ALCOHOL_PHENOL_RULES
 from dicts.dict_aldehydes_ketones import ALDEHYDE_KETONE_RULES
@@ -25,25 +24,26 @@ from dicts.dict_polymers_poc import POLYMERS_POC_RULES
 from dicts.dict_protecting_groups import PROTECTING_GROUP_RULES
 from dicts.dict_reduction import REDUCTION_RULES
 
-ACTIVE_RULES = {}
-ACTIVE_RULES.update(MACRO_REAGENTS)
-ACTIVE_RULES.update(REDUCTION_RULES)
-ACTIVE_RULES.update(OXIDATION_RULES)
-ACTIVE_RULES.update(ALDEHYDE_KETONE_RULES)
-ACTIVE_RULES.update(ALCOHOL_PHENOL_RULES) 
-ACTIVE_RULES.update(ALKENE_RULES)
-ACTIVE_RULES.update(ALKYL_HALIDE_RULES)
-ACTIVE_RULES.update(ALKYNE_RULES)
-ACTIVE_RULES.update(AROMATIC_RULES)
-ACTIVE_RULES.update(CARBOXYLIC_RULES)
-ACTIVE_RULES.update(NITROGEN_RULES)
-ACTIVE_RULES.update(POLYMERS_POC_RULES)
-ACTIVE_RULES.update(AMINE_RULES)
-ACTIVE_RULES.update(EAS_RULES)
-ACTIVE_RULES.update(PROTECTING_GROUP_RULES)
-ACTIVE_RULES.update(HETEROCYCLE_RULES)
-ACTIVE_RULES.update(ADVANCED_REARRANGEMENT_RULES)
-ACTIVE_RULES.update(BIOMOLECULE_RULES)
+REGISTRY = {
+    "advanced_rearrangements": ADVANCED_REARRANGEMENT_RULES,
+    "alcohols_phenols": ALCOHOL_PHENOL_RULES,
+    "aldehydes_ketones": ALDEHYDE_KETONE_RULES,
+    "alkenes": ALKENE_RULES,
+    "alkyl_halides": ALKYL_HALIDE_RULES,
+    "alkynes": ALKYNE_RULES,
+    "amines": AMINE_RULES,
+    "aromatics": AROMATIC_RULES,
+    "biomolecules": BIOMOLECULE_RULES,
+    "carboxylic": CARBOXYLIC_RULES,
+    "eas": EAS_RULES,
+    "heterocycles": HETEROCYCLE_RULES,
+    "macros": MACRO_REAGENTS,
+    "nitrogen": NITROGEN_RULES,
+    "oxidation": OXIDATION_RULES,
+    "polymers_poc": POLYMERS_POC_RULES,
+    "protecting_groups": PROTECTING_GROUP_RULES,
+    "reduction": REDUCTION_RULES
+}
 
 def execute_smarts(reactant, smarts_list):
     """Runs the RDKit SMARTS reaction and catches physical violations."""
@@ -54,32 +54,48 @@ def execute_smarts(reactant, smarts_list):
         for product_set in products:
             for p in product_set:
                 try:
-                    # RDKit strict chemistry check (catches 5-bonded carbons, etc.)
+                    # RDKit strict chemistry check
                     Chem.SanitizeMol(p)
                     results.add(Chem.MolToSmiles(p))
                 except ValueError as e:
-                    # Fails gracefully instead of crashing the server!
+                    # Fails gracefully
                     print(f"Discarding physically impossible intermediate: {e}")
                     pass 
     return results
 
-def apply_rules(smiles, reagent):
-    """Processes the input SMILES against the chosen reagent dictionary."""
+def apply_rules(smiles, reagent, active_modules=None, custom_dict=None):
+    """Processes the input SMILES against the dynamically built dictionary."""
     reactant = Chem.MolFromSmiles(smiles)
     if not reactant:
         return {"message": "Invalid molecule drawn."}
 
+    # 1. Build the dynamic master dictionary for this specific request
+    master_rules = {}
+    
+    # If no modules specified (e.g., direct API call), default to all
+    if active_modules is None:
+        active_modules = list(REGISTRY.keys())
+    
+    # Load selected default modules from the checkboxes
+    for module in active_modules:
+        if module in REGISTRY:
+            master_rules.update(REGISTRY[module])
+            
+    # Overlay custom user JSON (Overrides defaults if there is a name collision)
+    if isinstance(custom_dict, dict):
+        master_rules.update(custom_dict)
+
     all_results = set()
 
-    if reagent in MACRO_REAGENTS:
+    # 2. Sequential Macro Handling
+    if reagent in master_rules and isinstance(master_rules[reagent], list) and not any(">>" in step for step in master_rules[reagent]):
         current_smiles = [smiles]
-        
-        for step in MACRO_REAGENTS[reagent]:
+        for step in master_rules[reagent]:
             step_results = set()
             for s in current_smiles:
                 mol = Chem.MolFromSmiles(s)
                 if mol:
-                    step_data = ACTIVE_RULES.get(step, [])
+                    step_data = master_rules.get(step, [])
                     step_smarts_list = []
                     
                     if isinstance(step_data, dict):
@@ -100,10 +116,11 @@ def apply_rules(smiles, reagent):
                 
         return {"product_smiles": ".".join(current_smiles)} if current_smiles != [smiles] else {"message": "No reaction occurred."}
 
-    if reagent not in ACTIVE_RULES:
-        return {"message": "Reagent not programmed."}
+    # 3. Standard Execution
+    if reagent not in master_rules:
+        return {"message": "Reagent not found in active dictionaries."}
 
-    reagent_data = ACTIVE_RULES[reagent]
+    reagent_data = master_rules[reagent]
     smarts_list = []
 
     if isinstance(reagent_data, dict):
@@ -119,6 +136,7 @@ def apply_rules(smiles, reagent):
 
     all_results.update(execute_smarts(reactant, smarts_list))
 
+    # Tautomer check if primary attack fails
     if not all_results:
         enumerator = rdMolStandardize.TautomerEnumerator()
         tautomers = enumerator.Enumerate(reactant)
@@ -139,8 +157,13 @@ class RequestHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            all_reagents = list(ACTIVE_RULES.keys()) + list(MACRO_REAGENTS.keys())
-            self.wfile.write(json.dumps(all_reagents).encode('utf-8'))
+            
+            # Dynamically map each module to its specific list of reagents
+            reagent_map = {}
+            for module_name, module_dict in REGISTRY.items():
+                reagent_map[module_name] = list(module_dict.keys())
+                
+            self.wfile.write(json.dumps(reagent_map).encode('utf-8'))
         else:
             super().do_GET()
 
@@ -150,7 +173,13 @@ class RequestHandler(SimpleHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             data = json.loads(post_data.decode('utf-8'))
             
-            result = apply_rules(data.get('smiles', ''), data.get('reagent', ''))
+            # Extract dynamic configuration sent from script.js
+            smiles = data.get('smiles', '')
+            reagent = data.get('reagent', '')
+            active_modules = data.get('active_modules') 
+            custom_dict = data.get('custom_dictionary')
+            
+            result = apply_rules(smiles, reagent, active_modules, custom_dict)
             
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
@@ -161,8 +190,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
-    
-    print(f"Loaded {len(ACTIVE_RULES)} base reagents and {len(MACRO_REAGENTS)} macros.")
-    print(f"Starting simulator on port {port}...")
+    print(f"Loaded {len(REGISTRY)} base dictionary modules.")
+    print(f"Starting dynamic simulator on port {port}...")
     
     HTTPServer(('0.0.0.0', port), RequestHandler).serve_forever()
