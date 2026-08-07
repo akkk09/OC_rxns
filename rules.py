@@ -6,7 +6,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
-# Core Dictionaries
+
 from dicts.dict_advanced_rearrangements import ADVANCED_REARRANGEMENT_RULES
 from dicts.dict_alcohols_phenols import ALCOHOL_PHENOL_RULES
 from dicts.dict_aldehydes_ketones import ALDEHYDE_KETONE_RULES
@@ -27,7 +27,7 @@ from dicts.dict_protecting_groups import PROTECTING_GROUP_RULES
 from dicts.dict_reduction import REDUCTION_RULES
 
 app = Flask(__name__)
-CORS(app) # This automatically handles all the cross-origin routing for Vercel!
+CORS(app)
 
 REGISTRY = {
     "advanced_rearrangements": ADVANCED_REARRANGEMENT_RULES,
@@ -50,7 +50,7 @@ REGISTRY = {
     "reduction": REDUCTION_RULES
 }
 
-# --- OPTIMIZATIONS: LRU Caching ---
+
 @functools.lru_cache(maxsize=2048)
 def get_compiled_reaction(smarts):
     return AllChem.ReactionFromSmarts(smarts)
@@ -159,7 +159,7 @@ def apply_rules(smiles, reagent, active_modules=None, custom_dict=None):
     
     return {"product_smiles": ".".join(all_results)}
 
-# --- API ROUTES ---
+
 @app.route('/reagents', methods=['GET'])
 def get_reagents():
     reagent_map = {mod: list(rules.keys()) for mod, rules in REGISTRY.items()}

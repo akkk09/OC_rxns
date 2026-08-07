@@ -22,11 +22,10 @@ export function updateDropdownData() {
     AppState.sortedReagents = Array.from(activeReagents).sort();
 }
 
-// --- Autocomplete Logic & Debouncing ---
 const searchInput = document.getElementById('reagent');
 const dropdown = document.getElementById('custom-dropdown');
 
-// OPTIMIZATION: Debouncer prevents the UI from stuttering during rapid typing
+
 function debounce(func, wait) {
     let timeout;
     return function(...args) {
@@ -45,7 +44,7 @@ export function renderDropdown(filterText = '') {
         return;
     }
 
-    // Render efficiently
+
     const fragment = document.createDocumentFragment();
     filtered.forEach(r => {
         const div = document.createElement('div');
@@ -74,9 +73,9 @@ export function hideDropdown() {
 const debouncedSearchHandler = debounce((e) => {
     const parts = e.target.value.split('->');
     renderDropdown(parts[parts.length - 1]);
-}, 150); // Waits 150ms after typing stops
+}, 150);
 
-// --- Modals & Event Listeners ---
+
 export function initUI() {
     const dictModal = document.getElementById('dictModal');
     const builderModal = document.getElementById('builderModal');
@@ -96,7 +95,6 @@ export function initUI() {
         if (!e.target.closest('.autocomplete-wrapper')) hideDropdown();
     });
 
-    // Attach the debounced handler
     searchInput.addEventListener('input', debouncedSearchHandler);
 
     searchInput.addEventListener('focus', () => {
@@ -108,7 +106,6 @@ export function initUI() {
         cb.addEventListener('change', updateDropdownData);
     });
 
-    // File Upload
     document.getElementById('customDictUpload').addEventListener('change', function(event) {
         const file = event.target.files[0];
         const status = document.getElementById('uploadStatus');
@@ -135,7 +132,6 @@ export function initUI() {
         reader.readAsText(file);
     });
 
-    // Reagent Builder Form Submission
     document.getElementById('reagentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const name = document.getElementById('rbName').value.trim();

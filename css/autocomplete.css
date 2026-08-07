@@ -11,15 +11,10 @@
     display: none; 
     position: absolute; 
     top: calc(100% + 6px); 
-    
-    /* FIX: Anchor to the right edge of the input so it expands leftwards */
     right: 0; 
     left: auto;
-    
-    /* FIX: Keep it wide, but never wider than the user's screen */
     width: 600px; 
-    max-width: calc(100vw - 40px); 
-    
+    max-width: calc(100vw - 40px);
     max-height: 350px; background: #0A0A0A; border: 1px solid #333;
     border-radius: 8px; overflow-y: auto; z-index: 2000;
     box-shadow: 0 16px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
@@ -31,9 +26,7 @@
 
 .dropdown-item {
     padding: 10px 14px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 0.85rem; color: #EDEDED; cursor: pointer; border-bottom: 1px solid #1a1a1a;
-    
-    /* Keeps long text on one line and adds '...' to the end */
+    font-size: 0.85rem; color: #EDEDED; cursor: pointer; border-bottom:
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .dropdown-item:hover { background: #1A1A1A; color: #FFF; }
