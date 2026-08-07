@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 68" width="100%" height="100%">
+  <defs>
+    <!-- Cyan to Emerald Gradient -->
+    <linearGradient id="ocrxn-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+  </defs>
+
+  <!-- Hexagon Molecular Ring -->
+  <polygon points="32,4 58,19 58,49 32,64 6,49 6,19" 
+           fill="none" 
+           stroke="url(#ocrxn-grad)" 
+           stroke-width="3.5" 
+           stroke-linejoin="round" />
+  
+  <!-- Inner Logic Orbit -->
+  <circle cx="32" cy="34" r="14" 
+          fill="none" 
+          stroke="#334155" 
+          stroke-width="2" 
+          stroke-dasharray="4 3" />
+
+  <!-- Molecular Vertices (Nodes) -->
+  <circle cx="32" cy="4" r="3.5" fill="#06B6D4" />
+  <circle cx="58" cy="19" r="3.5" fill="#10B981" />
+  <circle cx="58" cy="49" r="3.5" fill="#10B981" />
+  <circle cx="32" cy="64" r="3.5" fill="#06B6D4" />
+  <circle cx="6" cy="49" r="3.5" fill="#3B82F6" />
+  <circle cx="6" cy="19" r="3.5" fill="#3B82F6" />
+
+  <!-- Center Reaction Arrow -->
+  <path d="M 20 34 L 42 34 M 36 28 L 43 34 L 36 40" 
+        fill="none" 
+        stroke="url(#ocrxn-grad)" 
+        stroke-width="3" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>
