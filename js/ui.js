@@ -25,6 +25,10 @@ export function updateDropdownData() {
 const searchInput = document.getElementById('reagent');
 const dropdown = document.getElementById('custom-dropdown');
 
+document.getElementById('themeBtn').addEventListener('click', () => {
+    const ketcherFrame = document.getElementById('ketcher-frame');
+    ketcherFrame.classList.toggle('ketcher-dark');
+});
 
 function debounce(func, wait) {
     let timeout;

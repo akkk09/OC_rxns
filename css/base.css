@@ -19,3 +19,12 @@ button#predictBtn {
 button#predictBtn:hover { background: #ddd; }
 
 #ketcher-frame { flex-grow: 1; width: 100%; border: none; background: #fff; }
+
+.ketcher-dark {
+    /* Inverts light/dark, but rotates the color wheel 180 degrees to keep atom colors accurate */
+    filter: invert(1) hue-rotate(180deg);
+    
+    /* Optional: Ketcher's gray UI might look a bit washed out when inverted. 
+       Uncomment this line to make it punchier if needed: */
+    /* filter: invert(1) hue-rotate(180deg) contrast(1.1) brightness(1.1); */
+}
